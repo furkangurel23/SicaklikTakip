@@ -16,7 +16,7 @@ public interface CihazRepository extends JpaRepository<Cihaz, Long>{
 	@Query(value = "SELECT * FROM cihaz c WHERE c.id = ?1", nativeQuery = true)
 	Cihaz getir(Long id);
 	
-	@Query(value = "SELECT * FROM cihaz c WHERE c.bagli_sirket LIKE '%:bagli_sirket%' order by c.id", nativeQuery = true)
+	@Query(value = "SELECT * FROM cihaz c WHERE c.bagli_sirket= :bagli_sirket order by c.id", nativeQuery = true)
 	List<Cihaz> findByCompany(@Param("bagli_sirket") String bagli_sirket);
 	
 	@Query(value = "SELECT * FROM cihaz c WHERE c.kayit_tarihi = :kayit_tarihi", nativeQuery = true)
@@ -25,7 +25,16 @@ public interface CihazRepository extends JpaRepository<Cihaz, Long>{
 	@Query(value = "SELECT * FROM cihaz c WHERE c.bagli_sirket LIKE '%:bagli_sirket%' and c.kayit_tarihi = :kayit_tarihi order by c.id", nativeQuery = true)
 	List<Cihaz> findByCompanyDateRegistration(@Param("bagli_sirket") String bagli_sirket, @Param("kayit_tarihi") Date kayit_tarihi);
 	
-//	@Query("SELECT u FROM User u WHERE u.status = :status and u.name = :name")
-//	User findUserByUserStatusAndUserName(@Param("status") Integer userStatus, 
-//	  @Param("name") String userName);
+//	@Override
+//	default <S extends Cihaz> S save(S entity) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//	
+//	@Override
+//	default <S extends Cihaz> List<S> saveAll(Iterable<S> entities) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+	
 }

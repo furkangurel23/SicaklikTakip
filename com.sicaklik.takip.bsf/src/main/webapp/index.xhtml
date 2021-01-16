@@ -1,31 +1,209 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
-    <h:head>
-        <title>Dynamic Spring Boot with JSF</title>
-        <link href="./resources/css/default.css" rel="stylesheet" type="text/css" />
+<!DOCTYPE html>
+<html lang="tr" xml:lang="tr"	xmlns="http://www.w3.org/1999/xhtml" 
+		xmlns:h="http://java.sun.com/jsf/html" 
+		xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+		xmlns:p="http://primefaces.org/ui" 
+		>
+
+	<h:head>
+        <f:facet name="first">
+	        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        </f:facet>
+        
+        <title>Cihaz Listeleme Sayfası</title>
+        
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" 
+        	integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous"/>
+        	
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" 
+        	integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"/>
+        	
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+        
+<!--         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" /> -->
+		<h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
+		<h:outputScript library="primefaces" name="jquery/jquery-plugins.js" target="head" />
+        	
+        <h:outputStylesheet library="css" name="custom.css"/>
+        <h:outputScript name="custom.js" library="js" />	
     </h:head>
+    
     <h:body>
-        <h:form>
-            
-            <p:growl autoUpdate="true"/>
-            
-            <div  class="centerDiv" style="width: 400px">
-                <p:panel>
-                    <f:facet name="header">Login</f:facet>
-            <h:panelGrid columns="2">
-                Username:
-                <h:inputText id="txLogin" value="#{user.userName}" required="true" label="Username"/>
-                Password:
-                <h:inputSecret id="txSenha" value="#{user.password}" required="true" label="Password"/>
-                
-            </h:panelGrid>
-                    <p:commandButton value="Login" action="#{user.doLogin()}" ajax="false"/>
-                </p:panel>
-            </div>
-        </h:form>
+    	
+       	<p:growl id="messages" showSummary="true" showDetail="false" life="5000"/>
+       
+		<h:form id="cihazSorgulamaForm">  
+		
+			<p:panel id="cihazSorgulamaPanel" >
+			
+				<p:accordionPanel>
+				    <p:tab title="Cihaz Sorgulama">
+				    	<p:panel header="Cihaz Sorgulama için Gerekli Bilgiler">
+				    		<p:panelGrid columns="4" columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+				    		
+				        		<h:outputLabel for="cihazNo" styleClass="koyu form-label" value="Cihaz No:"/> 
+				        		<p:inputText placeholder="Cihaz No" 
+				        			
+				        			id="cihazNo" 
+				        			value="#{cihazController.sorguEnt.id}"
+				        			styleClass="form-control"
+									/>
+									
+								<h:outputLabel for="sirket" styleClass="koyu form-label" value="Bağlı Şirket:"/> 
+				        		<p:inputText placeholder="Şirket" 
+				        			id="sirket" 
+				        			styleClass="form-control"
+				        			value="#{cihazController.sorguEnt.bagli_sirket}"
+									/>
+								
+								<h:outputLabel for="kayitTarihi" styleClass="koyu form-label" value="Kayıt Tarihi:"/> 
+								<p:calendar id="kayitTarihi" 
+									value="#{cihazController.sorguEnt.kayit_tarihi}"/>
+								
+				        	</p:panelGrid>
+				        	
+				        	<p:commandButton value="Sorgula" update="cihazListesiForm" action="#{cihazController.sorgula()}"/>
+				        	<p:commandButton action="#{cihazController.temizle}" value="Temizle" update="cihazSorgulamaForm">
+				        		<p:resetInput target="cihazSorgulamaForm"></p:resetInput>
+				        	</p:commandButton>
+				    	</p:panel>
+				    </p:tab>
+				</p:accordionPanel>
+			
+			</p:panel>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		</h:form>
+		
+		<h:form id="cihazListesiForm" >
+		
+			<p:panel id="cihazListesiPanel" >
+			
+				<div class="ui-g pb-3">
+					<p:commandButton id="cihazEkleBtn" value="Cihaz Ekle" onclick="PF('cihazEkleWidget').show();" />
+					<p:commandButton disabled="#{cihazController.secilen == null ? true : false}" 
+						oncomplete="PF('cihazSicaklikWidget').show();" value="Sıcaklık Takip" styleClass="btn btn-primary" 
+						action="#{cihazController.createBarModel()}"/>
+					<p:commandButton disabled="#{cihazController.secilen == null ? true : false}" action="#{cihazController.sil()}" update="cihazListesiForm" value="Sil" styleClass="btn btn-danger" />
+				</div>
+			
+				<p:dataTable var="cihaz" value="#{cihazController.cihazList}" style="margin-bottom:40px"
+					rowKey="#{cihaz.id}"
+					selection="#{cihazController.secilen}"
+					selectionMode="single"
+					rows="10"
+					paginator="true"
+					paginatorPosition="bottom"
+					paginatorTemplate=" {CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="Toplam Kayıt Sayısı: #{cihazController.cihazList.size()}"
+					rowsPerPageTemplate="10,20,50,100"
+					emptyMessage="Kayıt Bulunamadı"
+					widgetVar="cihazListWidget"
+					>
+					
+					<p:ajax event="rowSelect" update="cihazListesiForm"/>
+					
+			        <p:column headerText="Cihaz No" sortBy="#{cihaz.id}">
+			            <h:outputText value="#{cihaz.id}" />
+			        </p:column>
+			 
+			        <p:column headerText="Bağlı Şirket" sortBy="#{cihaz.bagli_sirket}">
+			            <h:outputText value="#{cihaz.bagli_sirket}" />
+			        </p:column>
+			 
+			        <p:column headerText="Kayıt Tarihi" sortBy="#{cihaz.kayit_tarihi}">
+			            <h:outputText value="#{cihaz.kayit_tarihi}" >
+			            	<f:convertDateTime pattern="dd/MM/yyyy" />
+			            </h:outputText>
+			        </p:column>
+	    		</p:dataTable>
+			
+			</p:panel>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		</h:form>
+		
+		<p:dialog header="Cihaz Ekleme" widgetVar="cihazEkleWidget" modal="true" width="800" height="600">
+		
+			<h:form id="cihazEkleForm">  
+		
+				<p:panel style="top:%50;" >
+			    	<p:panel header="Cihaz Ekleme">
+			    		
+			    		<div class="card card-body alert-warning mb-4">
+			    			<div>Cihaz No sistem tarafından otomatik olarak atanır.</div>
+			    		</div>
+			    		
+			    		<p:panelGrid columns="4" columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+			    		
+			    			
+								
+							<h:outputLabel for="sirket" styleClass="koyu form-label" value="Bağlı Şirket:"/> 
+			        		<p:inputText placeholder="Şirket" 
+			        			id="sirket" 
+			        			styleClass="form-control"
+			        			value="#{cihazController.ekleCihaz.bagli_sirket}"
+								/>
+							
+							<h:outputLabel for="kayitTarihi" styleClass="koyu form-label" value="Kayıt Tarihi:"/> 
+							<p:calendar id="kayitTarihi" 
+									value="#{cihazController.ekleCihaz.kayit_tarihi}"
+									placeholder="Kayıt Tarihi"
+									required="true"
+									requiredMessage="Bu alan zorunludur"
+									locale="tr" 
+									lang="tr"
+									showOn="button" 
+									pattern="dd/MM/yyyy"
+									maxdate="today"></p:calendar>
+									
+<!-- 							<h:outputLabel for="ekleyen" styleClass="koyu form-label" value="Bağlı Şirket:"/>  -->
+<!-- 			        		<p:inputText placeholder="Cihazı Ekleyen Kişi"  -->
+<!-- 			        			id="ekleyen" -->
+<!-- 			        			readonly="true"  -->
+<!-- 			        			value="#{cihazController}" -->
+<!-- 			        			styleClass="form-control" -->
+<!-- 								/>		 -->
+							
+			        	</p:panelGrid>
+			        	
+			        	<p:commandButton value="Ekle" oncomplete="PF('cihazEkleWidget').hide();" update="cihazListesiForm,messages" action="#{cihazController.cihazKaydet()}" />
+			        	<p:commandButton value="İptal" onclick="PF('cihazEkleWidget').hide();" />
+			    	</p:panel>
+				</p:panel>
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			</h:form>
+		
+		</p:dialog> 
+		
+		<p:dialog header="Cihaz Sıcaklık" widgetVar="cihazSicaklikWidget" modal="true" width="800" height="600">
+		
+			<h:form id="cihazSicaklikGosterForm">  
+		
+				<p:panel style="top:%50;" >
+			    	
+<!-- 			    	<p:barChart model="#{cihazController.barModel}" style="width: 100%; height: 500px;"/> -->
+					<p:outputLabel id="sicaklikLabel" value="#{cihazController.secilen.id} numaralı cihazın son 5 saniyedeki sıcaklığı =  #{cihazController.anlikSicaklik}" />
+			    	<p:poll widgetVar="imzapoll"  update="cihazSicaklikGosterForm:sicaklikLabel" autoStart="true" interval="5" listener="#{cihazController.sicaklikGetir}"/>
+				</p:panel>
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			</h:form>
+		
+		</p:dialog>
+		
+		<script>
+		
+		document.getElementById("cihazListesiForm:cihazEkleBtn").addEventListener("click", displayDate);
+
+		function displayDate() {
+		  	console.log("aloha");
+		}
+		
+		function basariliMessage() {
+			PF('messages').renderMessage({summary:'Başarılı', detail: 'Cihaz başarıyla eklenmiştir.', severity: 'info'});
+		}
+			
+		</script>
+		
     </h:body>
+
 </html>

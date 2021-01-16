@@ -20,9 +20,10 @@ public class Cihaz implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 7506477410204126671L;
+	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="id", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(nullable = false)
 	private Long id;
 	@Column(name="bagli_sirket")
 	private String bagli_sirket;

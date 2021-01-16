@@ -19,34 +19,8 @@ public class JsfConfig extends SpringBootServletInitializer implements ServletCo
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		super.onStartup(servletContext);
-		
-		System.out.println("girdi mi;");
-		
 		servletContext.setInitParameter("primefaces.CLIENT_SIDE_VALIDATION", "true");
 		servletContext.setInitParameter("javax.faces.PROJECT_STAGE", "Development");
-		
-		servletContext.setInitParameter("javax.faces.FACELETS_SKIP_COMMENTS", Boolean.TRUE.toString());
-		// primefaces icon set için
-		servletContext.setInitParameter("primefaces.FONT_AWESOME", Boolean.TRUE.toString());
-		
-		//JSF ortamının sayfalardaki hata ayıklama bilgilerini yazdırmasını sağlar.
-		servletContext.setInitParameter("primefaces.PROJECT_STAGE", "Development");
-		
-		//Javax.faces.STATE_SAVING_METHOD parametresini "server" (varsayılan değer) olarak ayarlamak, bu parametreyi "client" olarak 
-		//ayarlamaktan daha iyi performans sağlar. Bunun nedeni, sunucu durumunun kaydedilmesi durumun serileştirilmesini gerektirmemesidir.
-		servletContext.setInitParameter("primefaces.STATE_SAVING_METHOD", "server");
-		
-		//Facelets derleyicisinin sayfalardaki değişiklikleri kontrol edene kadar beklemesi gereken süreyi belirtir.
-		servletContext.setInitParameter("primefaces.FACELETS_REFRESH_PERIOD", "1");
-		
-		servletContext.setInitParameter("primefaces.FACELETS_BUFFER_SIZE", "500000");
-		servletContext.setInitParameter("javax.faces.PARTIAL_STATE_SAVING_METHOD", "true");
-		
-		servletContext.setInitParameter("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE", Boolean.TRUE.toString());
-		
-		servletContext.setInitParameter("primefaces.CSP", "true");
-		servletContext.setInitParameter("primefaces.CSP_POLICY", "script-src 'self' https: *.googleapis.com");
-		
 	}
 
 	@Bean

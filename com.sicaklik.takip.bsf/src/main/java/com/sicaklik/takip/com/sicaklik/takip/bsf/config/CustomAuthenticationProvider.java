@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
+import com.sicaklik.takip.com.sicaklik.takip.bsf.model.Kullanici;
 import com.sicaklik.takip.com.sicaklik.takip.bsf.serviceImpl.KullaniciServiceImp;
 import com.sicaklik.takip.com.sicaklik.takip.bsf.util.Util;
 
@@ -25,29 +26,48 @@ import com.sicaklik.takip.com.sicaklik.takip.bsf.util.Util;
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
     
-   Set<String> whitelist;
-
    @Autowired
    private PasswordEncoder passwordEncoder;
    
    @Autowired
    private KullaniciServiceImp kullaniciService;
    
-   @Autowired
-   private HttpServletRequest request;
+//   @Autowired
+//   private HttpServletRequest request;
    
     
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
-        String userIp = details.getRemoteAddress();
+//        WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
+//    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	String username = authentication.getName();
+        Object credentials = authentication.getCredentials();
+        System.out.println("credentials class: " + credentials.getClass());
+        if (!(credentials instanceof String)) {
+            return null;
+        }
+        String password = credentials.toString();
         
-        System.out.println("----------------userIp:"+userIp);
-        System.out.println("custom ip auth -> authenticate fonksiyonu içerisinde");
+        System.out.println(username);
+        System.out.println(password);
         
-        UsernamePasswordAuthenticationToken auth = (UsernamePasswordAuthenticationToken) authentication;
-        String username = String.valueOf(auth.getPrincipal());
-        String password = String.valueOf(auth.getCredentials());
+        
+//        String userIp = details.getRemoteAddress();
+//        
+//        System.out.println("----------------userIp:"+userIp);
+//        System.out.println("custom ip auth -> authenticate fonksiyonu içerisinde");
+//        
+//        UsernamePasswordAuthenticationToken auth = (UsernamePasswordAuthenticationToken) authentication;
+//        
+//        
+////        String username = String.valueOf(auth.getPrincipal());
+////        String password = String.valueOf(auth.getCredentials());
+//        
+//        String username = authentication.getName();
+//        String password = authentication.getCredentials().toString();
+        
+        
+        
         System.out.println("username = " + username);
         System.out.println("password = " + password);
 //        String responseCap2 = request.getParameter("j_bilgi");
@@ -57,13 +77,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         	throw new BadCredentialsException("alanlari doldurunuz");
         }
         
-        System.out.println("url = " + request.getRequestURI());
+//        System.out.println("url = " + request.getRequestURI());
         
         
-//        Optional<Kullanici> user = kullaniciRepository.findByUsernamePassword(username, password);
-//        if(user == null) {
-//        	throw new BadCredentialsException("gecersiz kullanici");
-//        }
+        Kullanici user = kullaniciService.findByUsernamePassword(username, password);
+        if(user == null) {
+        	throw new BadCredentialsException("gecersiz kullanici");
+        }
         
         List<GrantedAuthority> authorities =new ArrayList<GrantedAuthority>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));

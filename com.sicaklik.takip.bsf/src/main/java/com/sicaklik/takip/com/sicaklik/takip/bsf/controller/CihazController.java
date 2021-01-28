@@ -47,7 +47,9 @@ public class CihazController {
 	
 	private BarChartModel barModel;
 	
-	private double anlikSicaklik;
+	private double sicaklik_hava;
+	private double sicaklik_beton;
+	private double bagil_nem;
 	
 	@Autowired
 	private CihazServiceImp cihazService;
@@ -126,7 +128,7 @@ public class CihazController {
         List<Number> values = new ArrayList<>();
         
         for (CihazSicaklik c : cs) {
-        	values.add(c.getSicaklik());
+        	values.add(c.getSicaklik_hava());
 		}
         
         barDataSet.setData(values);
@@ -195,8 +197,11 @@ public class CihazController {
 	public void sicaklikGetir() {
 		 if(secilen != null) {
 			 CihazSicaklik cz = cihazSicaklikService.sonSicaklikGetir(secilen.getId());
-			 if(cz != null && cz.getSicaklik() != 0)
-				 anlikSicaklik = cz.getSicaklik();
+			 if(cz != null) {
+				 sicaklik_hava = cz.getSicaklik_hava();
+				 sicaklik_beton = cz.getSicaklik_beton();
+				 bagil_nem = cz.getBagil_nem();
+			 }
 		 }
 	}
 	

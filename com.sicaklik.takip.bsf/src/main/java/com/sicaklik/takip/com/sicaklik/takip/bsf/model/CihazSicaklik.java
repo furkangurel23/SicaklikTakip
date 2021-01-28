@@ -33,17 +33,23 @@ public class CihazSicaklik implements Serializable {
 	private Cihaz cihaz_id;
 	@Column(name="olusturma_tarih_saati", nullable = false)
 	private Date olusturma_tarih_saati;
-	@Column(name="sicaklik", nullable = false)
-	private double sicaklik;
+	@Column(name="sicaklik_hava", nullable = false)
+	private double sicaklik_hava;
+	@Column(name="sicaklik_beton", nullable = false)
+	private double sicaklik_beton;
+	@Column(name="bagil_nem", nullable = false)
+	private double bagil_nem;
 	
 	public CihazSicaklik() {
 		
 	}
 	
-	public CihazSicaklik(Cihaz cihaz_id, double sicaklik) {
+	public CihazSicaklik(Cihaz cihaz_id, double sicaklik_hava, double sicaklik_beton, double bagil_nem) {
 		super();
 		this.cihaz_id = cihaz_id;
-		this.sicaklik = sicaklik;
+		this.sicaklik_hava = sicaklik_hava;
+		this.sicaklik_beton = sicaklik_beton;
+		this.bagil_nem = bagil_nem;
 	}
 	
 }

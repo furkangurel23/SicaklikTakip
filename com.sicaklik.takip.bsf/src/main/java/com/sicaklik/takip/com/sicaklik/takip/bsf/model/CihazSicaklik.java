@@ -25,9 +25,9 @@ public class CihazSicaklik implements Serializable {
 	 */
 	private static final long serialVersionUID = -1588352320712953162L;
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id", nullable = false)
-	private long id;
+	private Long id;
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cihaz_id", nullable = false)
 	private Cihaz cihaz_id;

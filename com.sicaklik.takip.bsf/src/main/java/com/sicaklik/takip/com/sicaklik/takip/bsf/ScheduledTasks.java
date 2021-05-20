@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -80,6 +81,7 @@ public class ScheduledTasks {
 					xs.setSicaklik_hava(Double.parseDouble(ortamSicakligi));
 					xs.setSicaklik_beton(Double.parseDouble(betonSicakligi));
 					xs.setCihaz_id(cihaz);
+					xs.setOlusturma_tarih_saati(new Date());
 					cihazSicaklikService.kaydet(xs);
 				}
 			}
